@@ -1,12 +1,7 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 
-'''
-    Basic annotations for variables.
-'''
-
+"""Module that contains a type-annotated function"""
 
 def add(a: float, b: float) -> float:
-    '''
-        Returns sum of two floats.
-    '''
+    """Function that takes two floats and returns their sum as a float"""
     return a + b
