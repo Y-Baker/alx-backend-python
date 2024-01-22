@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Module for measure_time func"""
 
-import time, asyncio
+import time
+import asyncio
 wait_n = __import__('1-concurrent_coroutines').wait_n
 
 
