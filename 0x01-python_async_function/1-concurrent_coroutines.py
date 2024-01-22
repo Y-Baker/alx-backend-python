@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""module for wait_n func"""
 
 import asyncio
 from typing import List
