@@ -11,7 +11,7 @@ def stream_users_in_batches(batch_size):
 
     try:
         with connection.cursor() as cursor:
-            cursor.execute(f"SELECT * FROM users LIMIT {batch_size};")
+            cursor.execute(f"SELECT * FROM user_data LIMIT {batch_size};")
             while True:
                 batch = cursor.fetchone()
                 if not batch:
@@ -28,3 +28,4 @@ def batch_processing(batch_size):
     for batch in stream_users_in_batches(batch_size):
         if batch['age'] > 25:
             yield batch
+    return
