@@ -49,5 +49,6 @@ def insert_data(connection, data):
         with connection.cursor() as p:
             for row in __read_data(data):
                 p.execute("""INSERT INTO users (user_id, name, email, age) VALUES (%s, %s, %s, %s)""", (str(uuid.uuid4()), row['name'], row['email'], row['age']))
+            connection.commit()
     except Exception as e:
         print(f"Error: {e}")
