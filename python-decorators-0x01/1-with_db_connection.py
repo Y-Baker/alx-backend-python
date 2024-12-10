@@ -16,7 +16,7 @@ def with_db_connection(func):
         user_id = kwargs.get('user_id') or (args[1] if len(args) > 1 else None)
         if not conn:
             conn = connector()
-        re = func(conn, user_id)
+        re = func(conn, *args, **kwargs)
         conn.close()
         return re
     return wrapper
@@ -29,6 +29,7 @@ def get_user_by_id(conn, user_id):
     cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id,)) 
     return cursor.fetchone() 
 
-#### Fetch user by ID with automatic connection handling 
-user = get_user_by_id(user_id="70cef897-5095-44dd-ba79-a9efbf1f82a5")
-print(user)
+#### Fetch user by ID with automatic connection handling
+if __name__ == '__main__':
+    user = get_user_by_id(user_id="70cef897-5095-44dd-ba79-a9efbf1f82a5")
+    print(user)
