@@ -13,7 +13,6 @@ def with_db_connection(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         conn = kwargs.get('conn') or (args[0] if len(args) > 0 else None)
-        user_id = kwargs.get('user_id') or (args[1] if len(args) > 1 else None)
         if not conn:
             conn = connector()
         re = func(conn, *args, **kwargs)
