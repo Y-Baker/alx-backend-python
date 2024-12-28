@@ -65,9 +65,13 @@ class ConversationViewSet(viewsets.ModelViewSet):
     def _create(self, request):
         participants_ids = request.data.get('participants', [])
 
-        if not participants_ids:
+        filters = {
+            'participants': participants_ids,
+        }
+
+        if not filters['participants']:
             return Response({'Error': 'This field is required.'}, status=400)
-        if len(participants_ids) < 2:
+        if not participants_ids or len(participants_ids) < 2:
             return Response({'Error': 'At least 2 participants are required.'}, status=400)
         
         participants = User.objects.filter(pk__in=participants_ids)
