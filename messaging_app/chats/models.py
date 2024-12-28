@@ -19,6 +19,9 @@ class User(AbstractUser):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    groups = None
+    user_permissions = None
+
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 

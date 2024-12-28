@@ -56,18 +56,22 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
             raise serializers.ValidationError("Message body is too long.")
         return value
 
-
-class conversationSerializer(serializers.HyperlinkedModelSerializer):
+class ConversationSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="conversation-detail")
-    participants = UserSerializer(many=True)
-    messages = MessageSerializer(many=True, readonly=True)
+    participants = serializers.SerializerMethodField()
+    messages = MessageSerializer(many=True, read_only=True)
     created_since = serializers.SerializerMethodField()
 
     class Meta:
         model = Conversation
-        fields = ['url', 'conversation_id', 'title', 'participants', 'created_since', 'created_at']
-        read_only_fields = ['conversation_id', 'created_since', 'created_at']
+        fields = ['url', 'conversation_id', 'title', 'participants', 'created_since', 'created_at', 'messages']
+        read_only_fields = ['conversation_id', 'created_since', 'created_at', 'messages']
     
+    def get_participants(self, obj):
+        participants = obj.participants.all()
+        context = self.context
+        return UserSerializer(participants, many=True, context=context).data
+
     def get_created_since(self, obj):
         return (now() - obj.created_at).days
 
@@ -78,7 +82,21 @@ class conversationSerializer(serializers.HyperlinkedModelSerializer):
             raise serializers.ValidationError("Title is too long.")
         return value
     
-    def validate_participants(self, value):
-        if len(value) < 2:
+    def validate(self, data):
+        if 'participants' in self.initial_data and len(self.initial_data['participants']) < 2:
             raise serializers.ValidationError("A conversation must have at least 2 participants.")
-        return value
+        return data
+
+    def create(self, validated_data):
+        participants_data = self.initial_data.pop('participants', [])
+        conversation = Conversation.objects.create(**validated_data)
+        for participant_data in participants_data:
+            user = User.objects.get(user_id=participant_data['user_id'])
+            conversation.participants.add(user)
+        return conversation
+
+class NestedUserSerializer(serializers.ModelSerializer):
+    """For POST requests where only `user_id` is needed."""
+    class Meta:
+        model = User
+        fields = ['user_id']
