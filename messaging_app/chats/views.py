@@ -22,6 +22,17 @@ class MessageViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
     
+    @action(methods=['get'], detail=True)
+    def get_conversation(self, request, pk=None):
+        conversation = Conversation.objects.filter(pk=pk).first()
+        if not conversation:
+            return Response({'Error': 'Conversation not exists.'}, status=404)
+        
+        messages = Message.objects.filter(conversation=conversation).order_by('-sent_at')
+        serializer = MessageSerializer(messages, many=True)
+
+        return Response(serializer.data)
+
     @action(methods=['POST'], detail=False)
     def _create(self, request):
         sender_id = request.data.get('sender')
