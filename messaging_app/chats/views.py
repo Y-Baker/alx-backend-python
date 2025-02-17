@@ -21,7 +21,7 @@ class MessageViewSet(viewsets.ModelViewSet):
         serializer = MessageSerializer(messages, many=True)
 
         return Response(serializer.data)
-    
+
     @action(methods=['get'], detail=True)
     def get_conversation(self, request, pk=None):
         conversation = Conversation.objects.filter(pk=pk).first()
